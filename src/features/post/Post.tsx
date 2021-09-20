@@ -1,77 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Post.module.css";
 
-import { makeStyles } from "@material-ui/core/styles";
-import { Avatar, Divider, Checkbox } from "@material-ui/core";
-import { Favorite, FavoriteBorder } from "@material-ui/icons";
+import { Avatar, Divider } from "@material-ui/core";
+import QRCode from "qrcode.react";
 
-import AvatarGroup from "@material-ui/lab/AvatarGroup";
-
-import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch } from "../../app/store";
+import { useSelector } from "react-redux";
 
 import { selectProfiles } from "../auth/authSlice";
 
-import {
-  selectComments,
-  fetchPostStart,
-  fetchPostEnd,
-  fetchAsyncPostComment,
-  fetchAsyncPatchLiked,
-} from "./postSlice";
-
 import { PROPS_POST } from "../types";
-
-const useStyles = makeStyles((theme) => ({
-  small: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
-    marginRight: theme.spacing(1),
-  },
-}));
 
 const Post: React.FC<PROPS_POST> = ({
   postId,
   loginId,
   userPost,
   title,
+  price,
   imageUrl,
   liked,
 }) => {
-  const classes = useStyles();
-  const dispatch: AppDispatch = useDispatch();
   const profiles = useSelector(selectProfiles);
-  const comments = useSelector(selectComments);
-  const [text, setText] = useState("");
-
-  const commentsOnPost = comments.filter((com) => {
-    return com.post === postId;
-  });
 
   const prof = profiles.filter((prof) => {
     return prof.userProfile === userPost;
   });
-
-  const postComment = async (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    const packet = { text: text, post: postId };
-    await dispatch(fetchPostStart());
-    await dispatch(fetchAsyncPostComment(packet));
-    await dispatch(fetchPostEnd());
-    setText("");
-  };
-
-  const handlerLiked = async () => {
-    const packet = {
-      id: postId,
-      title: title,
-      current: liked,
-      new: loginId,
-    };
-    await dispatch(fetchPostStart());
-    await dispatch(fetchAsyncPatchLiked(packet));
-    await dispatch(fetchPostEnd());
-  };
+  const [qrData, setQrData] = useState({ title: "", price: "" });
+  useEffect(() => {
+    setQrData({ title: title, price: price });
+  }, [price, title]);
+  const sampleData = JSON.stringify(qrData);
 
   if (title) {
     return (
@@ -82,69 +39,21 @@ const Post: React.FC<PROPS_POST> = ({
         </div>
         <img className={styles.post_image} src={imageUrl} alt="" />
 
-        <h4 className={styles.post_text}>
-          <Checkbox
-            className={styles.post_checkBox}
-            icon={<FavoriteBorder />}
-            checkedIcon={<Favorite />}
-            checked={liked.some((like) => like === loginId)}
-            onChange={handlerLiked}
-          />
-          <strong> {prof[0]?.nickName}</strong> {title}
-          <AvatarGroup max={7}>
-            {liked.map((like) => (
-              <Avatar
-                className={styles.post_avatarGroup}
-                key={like}
-                src={profiles.find((prof) => prof.userProfile === like)?.img}
-              />
-            ))}
-          </AvatarGroup>
-        </h4>
-
         <Divider />
-        <div className={styles.post_comments}>
-          {commentsOnPost.map((comment) => (
-            <div key={comment.id} className={styles.post_comment}>
-              <Avatar
-                src={
-                  profiles.find(
-                    (prof) => prof.userProfile === comment.userComment
-                  )?.img
-                }
-                className={classes.small}
-              />
-              <p>
-                <strong className={styles.post_strong}>
-                  {
-                    profiles.find(
-                      (prof) => prof.userProfile === comment.userComment
-                    )?.nickName
-                  }
-                </strong>
-                {comment.text}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <form className={styles.post_commentBox}>
-          <input
-            className={styles.post_input}
-            type="text"
-            placeholder="add a comment"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
+        <div className={styles.post_item}>
+          <div className={styles.post_description}>{title}</div>
+          <div className={styles.post_description}>価格　{price} xym</div>
+          <QRCode
+            className={styles.post_qrcode}
+            value={sampleData}
+            size={128}
+            bgColor={"#ffffff"}
+            fgColor={"#000000"}
+            level={"L"}
+            includeMargin={false}
+            renderAs={"svg"}
           />
-          <button
-            disabled={!text.length}
-            className={styles.post_button}
-            type="submit"
-            onClick={postComment}
-          >
-            Post
-          </button>
-        </form>
+        </div>
       </div>
     );
   }

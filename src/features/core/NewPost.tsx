@@ -37,6 +37,7 @@ const NewPost: React.FC = () => {
 
   const [image, setImage] = useState<File | null>(null);
   const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
 
   const handlerEditPicture = () => {
     const fileInput = document.getElementById("imageInput");
@@ -45,12 +46,13 @@ const NewPost: React.FC = () => {
 
   const newPost = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    const packet = { title: title, img: image };
+    const packet = { title: title, price: price, img: image };
     await dispatch(fetchPostStart());
     await dispatch(fetchAsyncNewPost(packet));
     await dispatch(fetchPostEnd());
     setTitle("");
     setImage(null);
+    setPrice("");
     dispatch(resetOpenNewPost());
   };
 
@@ -64,13 +66,19 @@ const NewPost: React.FC = () => {
         style={customStyles}
       >
         <form className={styles.core_signUp}>
-          <h1 className={styles.core_title}>SNS clone</h1>
+          <h1 className={styles.core_title}>Shop Title</h1>
 
           <br />
           <TextField
             placeholder="Please enter caption"
             type="text"
             onChange={(e) => setTitle(e.target.value)}
+          />
+
+          <TextField
+            placeholder="Please enter price"
+            type="text"
+            onChange={(e) => setPrice(e.target.value)}
           />
 
           <input

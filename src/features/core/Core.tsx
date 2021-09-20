@@ -102,7 +102,7 @@ const Core: React.FC = () => {
       <EditProfile />
       <NewPost />
       <div className={styles.core_header}>
-        <h1 className={styles.core_title}>SNS clone</h1>
+        <h1 className={styles.core_title}>Shop Title</h1>
         {profile?.nickName ? (
           <>
             <button
@@ -181,6 +181,7 @@ const Core: React.FC = () => {
                     <Post
                       postId={post.id}
                       title={post.title}
+                      price={post.price}
                       loginId={profile.userProfile}
                       userPost={post.userPost}
                       imageUrl={post.img}

@@ -21,6 +21,7 @@ export interface PROPS_NICKNAME {
 /*postSlice.ts*/
 export interface PROPS_NEWPOST {
   title: string;
+  price: string;
   img: File | null;
 }
 export interface PROPS_LIKED {
@@ -39,6 +40,7 @@ export interface PROPS_POST {
   loginId: number;
   userPost: number;
   title: string;
+  price: string;
   imageUrl: string;
   liked: number[];
 }

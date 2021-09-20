@@ -9,6 +9,9 @@
   align-items: center;
   padding: 15px;
 }
+.post_item {
+  align-items: center;
+}
 .post_avatar {
   margin-right: 10px;
   z-index: 0;
@@ -17,6 +20,18 @@
   width: 100%;
   height: 280px;
   object-fit: contain;
+}
+.post_item {
+  width: 100%;
+  height: 280px;
+  object-fit: contain;
+  display: grid;
+}
+.post_description {
+  text-align: center;
+}
+.post_qrcode {
+  margin: auto;
 }
 .post_text {
   font-weight: normal;
